@@ -77,6 +77,8 @@ SpyEnlistInTransaction (
     #pragma alloc_text(PAGE, SpyConnect)
     #pragma alloc_text(PAGE, SpyDisconnect)
     #pragma alloc_text(PAGE, SpyMessage)
+#else
+when enter this?
 #endif
 
 
@@ -127,6 +129,7 @@ Return Value:
         MiniSpyData.MaxRecordsToAllocate = DEFAULT_MAX_RECORDS_TO_ALLOCATE;
         MiniSpyData.RecordsAllocated = 0;
         MiniSpyData.NameQueryMethod = DEFAULT_NAME_QUERY_METHOD;
+        MiniSpyData.DebugFlags = SPY_DEBUG_PARSE_NAMES;
 
         MiniSpyData.DriverObject = DriverObject;
 
@@ -303,6 +306,7 @@ Return value
     //
 
     FltCloseClientPort( MiniSpyData.Filter, &MiniSpyData.ClientPort );
+    MiniSpyData.ClientPort = NULL;
 }
 
 NTSTATUS
@@ -318,7 +322,7 @@ Routine Description:
     failed.  Other unload requests may be failed.
 
     You can disallow OS unload request by setting the
-    FLTREGFL_DO_NOT_SUPPORT_SERVICE_STOP flag in the FLT_REGISTARTION
+    FLTREGFL_DO_NOT_SUPPORT_SERVICE_STOP flag in the FLT_REGISTRATION
     structure.
 
 Arguments:
@@ -440,6 +444,10 @@ Return Value:
     //  these buffers.
     //
 
+    DbgPrint("SpyMessage, InputBufferSize=%d, cal size=%d\n", InputBufferSize,
+            FIELD_OFFSET(COMMAND_MESSAGE, Command) + sizeof(MINISPY_COMMAND)
+        );
+
     if ((InputBuffer != NULL) &&
         (InputBufferSize >= (FIELD_OFFSET(COMMAND_MESSAGE,Command) +
                              sizeof(MINISPY_COMMAND)))) {
@@ -457,6 +465,8 @@ Return Value:
         
             return GetExceptionCode();
         }
+
+        DbgPrint("receive command=%d\n", command);
 
         switch (command) {
 

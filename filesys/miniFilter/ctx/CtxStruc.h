@@ -107,6 +107,7 @@ typedef struct _CTX_FILE_CONTEXT {
     //  with context is cleaned-up
     //
     
+    //PERESOURCE Resource;
 } CTX_FILE_CONTEXT, *PCTX_FILE_CONTEXT;
 
 #define CTX_FILE_CONTEXT_SIZE         sizeof( CTX_FILE_CONTEXT )

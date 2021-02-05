@@ -29,50 +29,6 @@ Environment:
 
 #define  USER_SCAN_THREAD_COUNT   6      // the number of scanning worker threads.
 
-typedef struct _SCANNER_MESSAGE {
-
-    //
-    //  Required structure header.
-    //
-
-    FILTER_MESSAGE_HEADER MessageHeader;
-
-    //
-    //  Private scanner-specific fields begin here.
-    //
-
-    AV_SCANNER_NOTIFICATION Notification;
-    
-    //
-    //  Overlapped structure: this is not really part of the message
-    //  However we embed it here so that when we get pOvlp in 
-    //  GetQueuedCompletionStatus(...), we can restore the message 
-    //  via CONTAINING_RECORD macro.
-    //
-    
-    OVERLAPPED Ovlp;
-
-} SCANNER_MESSAGE, *PSCANNER_MESSAGE;
-
-#define SCANNER_MESSAGE_SIZE   (sizeof(FILTER_MESSAGE_HEADER) + sizeof(AV_SCANNER_NOTIFICATION))
-
-typedef struct _SCANNER_REPLY_MESSAGE {
-
-    //
-    //  Required structure header.
-    //
-
-    FILTER_REPLY_HEADER ReplyHeader;
-
-    //
-    //  Private scanner-specific fields begin here.
-    //
-    
-    ULONG   ThreadId;
-
-} SCANNER_REPLY_MESSAGE, *PSCANNER_REPLY_MESSAGE;
-
-#define SCANNER_REPLY_MESSAGE_SIZE   (sizeof(FILTER_REPLY_HEADER) + sizeof(ULONG))
 
 //
 //  Local routines

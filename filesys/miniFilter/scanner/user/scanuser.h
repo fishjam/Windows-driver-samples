@@ -14,7 +14,7 @@ Abstract:
 
 Environment:
 
-    Kernel & user mode
+    user mode
 
 --*/
 #ifndef __SCANUSER_H__

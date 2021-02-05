@@ -581,7 +581,7 @@ Return Value:
 
 #endif
 
-    Globals.RemapRenamesAndLinks = FALSE;
+    Globals.RemapRenamesAndLinks = TRUE;
 
     RtlInitUnicodeString( &Globals.Mapping.NewName, NULL );
 
@@ -612,7 +612,7 @@ Return Value:
     status = SimRepSetConfiguration( RegistryPath );
 
     DebugTrace( DEBUG_TRACE_LOAD_UNLOAD,
-                ("[SimRep]: Driver being loaded\n") );
+                ("[SimRep]: Driver being loaded, debugLevel=0x%x\n", Globals.DebugLevel));
 
     if (!NT_SUCCESS( status )) {
 
@@ -1287,18 +1287,18 @@ Return Value:
                                   !FlagOn( irpSp->Flags, SL_CASE_SENSITIVE ),
                                   NULL );
 
+    DebugTrace(DEBUG_TRACE_REPARSE_OPERATIONS,
+        ("[SimRep]: SimRepPreNetworkQueryOpen -> File name %wZ matches result=%d. (Cbd = %p, FileObject = %p)\n"
+            "\tMapping.OldFileName = %wZ\n"
+            "\tMapping.NewFileName = %wZ\n",
+            &nameInfo->Name,
+            match,
+            Cbd,
+            FltObjects->FileObject,
+            Globals.Mapping.OldName,
+            Globals.Mapping.NewName));
+
     if (match) {
-
-        DebugTrace( DEBUG_TRACE_REPARSE_OPERATIONS,
-                    ("[SimRep]: SimRepPreNetworkQueryOpen -> File name %wZ matches mapping. (Cbd = %p, FileObject = %p)\n"
-                     "\tMapping.OldFileName = %wZ\n"
-                     "\tMapping.NewFileName = %wZ\n",
-                     &nameInfo->Name,
-                     Cbd,
-                     FltObjects->FileObject,
-                     Globals.Mapping.OldName,
-                     Globals.Mapping.NewName) );
-
         //
         // Because the file matched the mapping, we need to redirect this open with a new name.
         //
@@ -2364,7 +2364,7 @@ Return Value:
     //  Check if the filename matches this mapping entry (is the mapping
     //  entry itself or some child directory of the mapping entry)
     //
-
+    DbgPrint("now will compare for MappingPath=%wZ, fileName=%wZ\n", MappingPath, &fileName);
     if (RtlPrefixUnicodeString( MappingPath, &fileName, IgnoreCase )) {
 
         if (fileName.Length == MappingPath->Length) {
